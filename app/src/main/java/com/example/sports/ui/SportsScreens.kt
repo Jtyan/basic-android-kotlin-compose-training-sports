@@ -16,6 +16,7 @@
 
 package com.example.sports.ui
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,6 +49,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,12 +58,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -342,6 +346,46 @@ private fun SportsDetail(
     }
 }
 
+@Composable
+fun SportsListAndDetails(
+    sports: List<Sport>,
+    onClick: (Sport) -> Unit,
+    onBackPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+) {
+    Row(modifier = Modifier) {
+        SportsList(
+            sports = sports,
+            onClick = onClick,
+            contentPadding = contentPadding,
+            modifier = modifier.weight(1f).padding(dimensionResource(R.dimen.padding_medium))
+        )
+        SportsDetail(
+            selectedSport = LocalSportsDataProvider.defaultSport,
+            onBackPressed = onBackPressed,
+            contentPadding = PaddingValues(
+                top = contentPadding.calculateTopPadding()
+            ),
+            modifier = modifier.weight(1f)
+        )
+    }
+}
+
+@Preview(device = Devices.TABLET, showBackground = true, showSystemUi = true)
+@Composable()
+fun SportsListAndDetailsPreview() {
+    SportsTheme {
+        Surface {
+            SportsListAndDetails(
+                sports = LocalSportsDataProvider.getSportsData(),
+                onClick = {},
+                onBackPressed = {}
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun SportsListItemPreview() {
@@ -363,5 +407,18 @@ fun SportsListPreview() {
                 onClick = {},
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun SportsDetailPreview() {
+    SportsTheme {
+        SportsDetail(
+            selectedSport = LocalSportsDataProvider.defaultSport,
+            onBackPressed = {},
+            contentPadding = PaddingValues(0.dp)
+        )
+
     }
 }
